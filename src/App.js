@@ -21,7 +21,7 @@ const questions = [
     correct: 2,
   },
 ];
-
+//===================================
 function Result() {
   return (
     <div className="result">
