@@ -1,44 +1,58 @@
-import React from 'react';
-import './index.scss';
+import React, { useEffect, useState } from "react";
+import Collection from "./Collection";
+import "./index.scss";
 
-function Collection({ name, images }) {
-  return (
-    <div className="collection">
-      <img className="collection__big" src={images[0]} alt="Item" />
-      <div className="collection__bottom">
-        <img className="collection__mini" src={images[1]} alt="Item" />
-        <img className="collection__mini" src={images[2]} alt="Item" />
-        <img className="collection__mini" src={images[3]} alt="Item" />
-      </div>
-      <h4>{name}</h4>
-    </div>
-  );
-}
+const cat = ["Все", "Море", "Горы", "Архитектура", "Города"];
 
 function App() {
+  const [collection, setCollection] = useState([]);
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("Все");
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setIsLoading(true)
+    fetch("https://63271534ba4a9c47533059e2.mockapi.io/favorite")
+      .then((res) => res.json())
+      .then((arr) => setCollection(arr))
+      .catch((err) => console.log(err))
+      .finally(()=>setIsLoading(false))
+  }, []);
+  //console.log(collection)
   return (
     <div className="App">
       <h1>Моя коллекция фотографий</h1>
       <div className="top">
         <ul className="tags">
-          <li className="active">Все</li>
-          <li>Горы</li>
-          <li>Море</li>
-          <li>Архитектура</li>
-          <li>Города</li>
+          {cat.map((item, index) => (
+            <li
+              key={index}
+              className={cat[index] === category ? "active" : ""}
+              onClick={() => setCategory(cat[index])}
+            >
+              {item}
+            </li>
+          ))}
+        
         </ul>
-        <input className="search-input" placeholder="Поиск по названию" />
+        <input
+          value={search}
+          className="search-input"
+          placeholder="Поиск по названию"
+          onChange={(e) => setSearch(e.target.value)}
+        />
       </div>
       <div className="content">
-        <Collection
-          name="Путешествие по миру"
-          images={[
-            'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTN8fGNpdHl8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60',
-            'https://images.unsplash.com/photo-1560840067-ddcaeb7831d2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NDB8fGNpdHl8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60',
-            'https://images.unsplash.com/photo-1531219572328-a0171b4448a3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mzl8fGNpdHl8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60',
-            'https://images.unsplash.com/photo-1573108724029-4c46571d6490?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MzR8fGNpdHl8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60',
-          ]}
-        />
+        {isLoading? <h2>Идёт загрузка... </h2>:collection
+          .filter((elem) =>
+            elem.name.toLowerCase().includes(search.toLowerCase()) 
+          )
+          .filter((elem) =>
+            cat[elem.category]===category || category==="Все"
+          )
+          .map((item, index) => (
+            <Collection key={index} name={item.name} images={item.photos} />
+          ))}
       </div>
       <ul className="pagination">
         <li>1</li>
