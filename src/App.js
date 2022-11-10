@@ -25,21 +25,21 @@ function App() {
 // ====  Пересчёт при вводе input
   const inLeft = (v) => {
     setInputL(v);
-    setInputR(v * kf(sumbL, sumbR));
+    setInputR((v * kf(sumbL, sumbR)).toFixed(3));
   };
   const inRight = (v) => {
     setInputR(v);
-    setInputL(v * kf(sumbR, sumbL));
+    setInputL((v * kf(sumbR, sumbL)).toFixed(3));
   };
 // ====  Пересчёт при смене валюты
   const changeForexL = (cur)=>{
     setSumbL(cur)
     //console.log(sumbL)
-    setInputL(inputR * kf(sumbR, cur))
+    setInputL((inputR * kf(sumbR, cur)).toFixed(3))
   }
   const changeForexR = (cur)=>{
     setSumbR(cur)
-    setInputR(inputL * kf(sumbL, cur))
+    setInputR((inputL * kf(sumbL, cur)).toFixed(3))
   }
 
   return (
